@@ -7,44 +7,43 @@ import robocode.HitRobotEvent;
 import robocode.HitWallEvent;
 import robocode.Robot;
 import robocode.ScannedRobotEvent;
-import robocode.util.Utils;
 
 public class HAL9001 extends AdvancedRobot {
-	
-	double nextOrientation = 0;
-	long lastTurn = System.currentTimeMillis();
+	private Scanner scanner = new Scanner(this);
+
+	private void initialize() {
+		setColors(Color.BLACK, Color.RED, Color.YELLOW, Color.PINK, Color.BLACK);
+		setAdjustGunForRobotTurn(true);
+		setAdjustRadarForGunTurn(true);
+		setAdjustRadarForRobotTurn(true);
+	}
 	
 	@Override
 	public void run() {
-		
-		setAllColors(Color.CYAN);
-		
+		initialize();
 		while (true) {
-			setTurnRadarRight(Double.POSITIVE_INFINITY);
-			
-			execute();
+			scanner.scan();
 		}
 	}
 	
 	@Override
 	public void onScannedRobot(ScannedRobotEvent event) {
+		scanner.onScanned(event);
+		
 		setTurnRight(event.getBearing());
+		setTurnGunRight((getHeading() - getGunHeading() + event.getBearing()) % 360);
 		execute();
-		if(event.getDistance() < 5) {
-			setFire(3.0);
-		}
+		
+		if (event.getDistance() < 45) setFire(getEnergy() * 0.2);
 		setAhead(event.getDistance() + 5);
 		execute();
-		scan();
 	}
 	
 	@Override
 	public void onHitRobot(HitRobotEvent event) {
-		setAhead(-2);
-		setFire(10.0);
+		setAhead(-1);
+		setFire(getEnergy() * 0.5);
 		execute();
-		scan();
 	}
-
 }
  
