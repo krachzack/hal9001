@@ -19,7 +19,7 @@ public class HAL9001 extends AdvancedRobot {
 		setAllColors(Color.CYAN);
 		
 		while (true) {
-			setTurnRight(5);
+			setTurnRadarRight(Double.POSITIVE_INFINITY);
 			execute();
 		}
 	}
