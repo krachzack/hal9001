@@ -3,36 +3,37 @@ package im500.main;
 import java.awt.Color;
 
 import robocode.AdvancedRobot;
-import robocode.HitWallEvent;
-import robocode.Robot;
 import robocode.ScannedRobotEvent;
-import robocode.util.Utils;
 
 public class HAL9001 extends AdvancedRobot {
-	
-	double nextOrientation = 0;
-	long lastTurn = System.currentTimeMillis();
+	private Scanner scanner = new Scanner(this);
+
+	private void initialize() {
+		setColors(Color.BLACK, Color.RED, Color.YELLOW, Color.BLACK, Color.BLACK);
+		setAdjustGunForRobotTurn(true);
+		setAdjustRadarForGunTurn(true);
+		setAdjustRadarForRobotTurn(true);
+	}
 	
 	@Override
 	public void run() {
-		
-		setAllColors(Color.CYAN);
-		
+		initialize();
 		while (true) {
-			setTurnRight(5);
-			execute();
+			scanner.scan();
 		}
 	}
 	
 	@Override
 	public void onScannedRobot(ScannedRobotEvent event) {
+		scanner.onScanned(event);
+		
 		setTurnRight(event.getBearing());
+		setTurnGunRight((getHeading() - getGunHeading() + event.getBearing()) % 360);
 		execute();
-		setFire(10.0);
+		
+		if (event.getDistance() < 60) setFire(10.0);
 		setAhead(event.getDistance() + 5);
 		execute();
-		scan();
 	}
-
 }
  
