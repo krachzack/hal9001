@@ -13,3 +13,6 @@ hs_err_pid*
 
 # Mac indexing files
 .DS_Store
+
+# Robocode generated files
+config/robocode.properties
