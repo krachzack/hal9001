@@ -5,8 +5,8 @@ import robocode.ScannedRobotEvent;
 import robocode.util.Utils;
 
 public class Scanner {
-	private AdvancedRobot robot;
 	private static double CORRECTION_FACTOR = 2.0;
+	private AdvancedRobot robot;
 	
 	public Scanner(AdvancedRobot robot) {
 		this.robot = robot;

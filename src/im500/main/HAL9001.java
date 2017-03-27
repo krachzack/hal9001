@@ -4,11 +4,10 @@ import java.awt.Color;
 
 import robocode.AdvancedRobot;
 import robocode.HitRobotEvent;
-import robocode.HitWallEvent;
-import robocode.Robot;
 import robocode.ScannedRobotEvent;
 
 public class HAL9001 extends AdvancedRobot {
+	private static int CLOSE_QUARTERS_DISTANCE = 65;
 	private Scanner scanner = new Scanner(this);
 
 	private void initialize() {
@@ -34,7 +33,12 @@ public class HAL9001 extends AdvancedRobot {
 		setTurnGunRight((getHeading() - getGunHeading() + event.getBearing()) % 360);
 		execute();
 		
-		if (event.getDistance() < 45) setFire(getEnergy() * 0.2);
+		//Maximum firepower is 3 (sadly...)
+		double firepower = 0.1;
+		if (event.getDistance() < CLOSE_QUARTERS_DISTANCE * 4) firepower = 1;
+		if (event.getDistance() < CLOSE_QUARTERS_DISTANCE * 2) firepower = 2;
+		if (event.getDistance() < CLOSE_QUARTERS_DISTANCE) firepower = 3;
+		if (getEnergy() > 5) setFire(firepower);
 		setAhead(event.getDistance() + 5);
 		execute();
 	}
@@ -42,7 +46,6 @@ public class HAL9001 extends AdvancedRobot {
 	@Override
 	public void onHitRobot(HitRobotEvent event) {
 		setAhead(-1);
-		setFire(getEnergy() * 0.5);
 		execute();
 	}
 }
