@@ -8,7 +8,7 @@ import robocode.HitRobotEvent;
 import robocode.ScannedRobotEvent;
 
 public class HAL9001 extends AdvancedRobot {
-	private static int CLOSE_QUARTERS_DISTANCE = 65;
+	private static int CLOSE_QUARTERS_DISTANCE = 10;
 	private Scanner scanner = new Scanner(this);
 	private Tracker tracker = new Tracker(this);
 
@@ -32,7 +32,17 @@ public class HAL9001 extends AdvancedRobot {
 		tracker.onScannedRobot(event);
 		scanner.onScanned(event);
 		
-		setTurnRight(event.getBearing());
+		Move.towards(this, tracker.getProjectedX(), tracker.getProjectedY());
+		
+		setTurnGunRight((getHeading() - getGunHeading() + event.getBearing()) % 360);
+		
+		double firepower = 0.1;
+		if (event.getDistance() < CLOSE_QUARTERS_DISTANCE * 4) firepower = 1;
+		if (event.getDistance() < CLOSE_QUARTERS_DISTANCE * 2) firepower = 2;
+		if (event.getDistance() < CLOSE_QUARTERS_DISTANCE) firepower = 3;
+		if (getEnergy() > 5) setFire(firepower);
+		
+		/*setTurnRight(event.getBearing());
 		setTurnGunRight((getHeading() - getGunHeading() + event.getBearing()) % 360);
 		execute();
 		
@@ -42,7 +52,7 @@ public class HAL9001 extends AdvancedRobot {
 		if (event.getDistance() < CLOSE_QUARTERS_DISTANCE * 2) firepower = 2;
 		if (event.getDistance() < CLOSE_QUARTERS_DISTANCE) firepower = 3;
 		if (getEnergy() > 5) setFire(firepower);
-		setAhead(event.getDistance() + 5);
+		setAhead(event.getDistance() + 5);*/
 		execute();
 	}
 	
