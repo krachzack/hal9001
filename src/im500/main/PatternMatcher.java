@@ -37,11 +37,11 @@ public class PatternMatcher {
 		enemyName = event.getName();
 		
 		// create record
-		log.addFirst(new Record(event.getHeading() - enemyHeading, event.getVelocity()));
-		enemyHeading = event.getHeading();
+		log.addFirst(new Record(event.getHeadingRadians() - enemyHeading, event.getVelocity()));
+		enemyHeading = event.getHeadingRadians();
 		enemyVelocity = event.getVelocity();
 		
-		double futureHeading = event.getHeading();
+		double futureHeading = event.getHeadingRadians();
 		
 		// calculate position
 		double selfX = robot.getX();
@@ -54,7 +54,7 @@ public class PatternMatcher {
 		robot.getGraphics().setColor(Color.RED);
 		robot.getGraphics().drawOval((int)enemyX - 10, (int)enemyY - 10, 20, 20);
 		
-		List<Record> predictions = getPredictions(7);
+		List<Record> predictions = getPredictions(30);
 		if(predictions != null){
 			// draw predictions
 			for(Record r : predictions){
@@ -83,7 +83,8 @@ public class PatternMatcher {
 			double squaredDistSum = 0;
 			for(int j = 0; j < MATCH_LENGTH; j++){
 				Record r = log.get(j+i);
-				squaredDistSum += r.getHeadingDelta()*r.getHeadingDelta() + r.getVelocity()*r.getVelocity();
+				Record r2 = log.get(j);
+				squaredDistSum += (r2.getHeadingDelta() - r.getHeadingDelta())*(r2.getHeadingDelta() - r.getHeadingDelta()) + (r2.getVelocity() - r.getVelocity())*(r2.getVelocity() - r.getVelocity());
 				if(squaredDistSum < bestMatchDistSum){
 					bestMatchDistSum = squaredDistSum;
 					bestMatchIndex = i;
