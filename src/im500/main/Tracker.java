@@ -32,14 +32,14 @@ public class Tracker {
 		enemyTurn = e.getTime();
 	}
 	
-	public double getProjectedX() {
+	public double getProjectedX(double ticksIntoFuture) {
 		long deltaTurns = r.getTime() - enemyTurn;
-		return enemyX + Math.cos(Angle.roboToMath(enemyAbsoluteAngle)) * enemyVelocity * deltaTurns;
+		return enemyX + Math.cos(Angle.roboToMath(enemyAbsoluteAngle)) * enemyVelocity * (deltaTurns + ticksIntoFuture);
 	}
 	
-	public double getProjectedY() {
+	public double getProjectedY(double ticksIntoFuture) {
 		long deltaTurns = r.getTime() - enemyTurn;
-		return enemyY + Math.sin(Angle.roboToMath(enemyAbsoluteAngle)) * enemyVelocity * deltaTurns;
+		return enemyY + Math.sin(Angle.roboToMath(enemyAbsoluteAngle)) * enemyVelocity * (deltaTurns + ticksIntoFuture);
 	}
 	
 }
