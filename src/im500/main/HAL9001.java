@@ -12,13 +12,14 @@ public class HAL9001 extends AdvancedRobot {
 	private static int CLOSE_QUARTERS_DISTANCE = 90;
 	private Scanner scanner = new Scanner(this);
 	private Tracker tracker = new Tracker(this);
-	private PatternMatcher matcher = new PatternMatcher(this);
+	private PatternMatcher matcher = new PatternMatcher();
 
 	private void initialize() {
 		setColors(Color.BLACK, Color.RED, Color.YELLOW, Color.PINK, Color.BLACK);
 		setAdjustGunForRobotTurn(true);
 		setAdjustRadarForGunTurn(true);
 		setAdjustRadarForRobotTurn(true);
+		matcher.setRobot(this);
 	}
 	
 	@Override
@@ -45,9 +46,6 @@ public class HAL9001 extends AdvancedRobot {
 		if (getEnergy() > 5) setFire(firepower);
 		
 		
-		System.out.println(firepower);
-		
-		
 		double bulletVelocity = 20 - 3 * firepower;
 		double ticksUntilHit = event.getDistance() / bulletVelocity;
 		System.out.println("Ticks: " + ticksUntilHit);
@@ -55,7 +53,7 @@ public class HAL9001 extends AdvancedRobot {
 		double[] ememyPosFutureDumb = new double[] { tracker.getProjectedX(ticksUntilHit), tracker.getProjectedY(ticksUntilHit) };
 		double[] enemyPosFutureSmart = matcher.getFuturePosition(
 			(int) Math.round(ticksUntilHit),
-			ememyPosFutureDumb,
+			new double[] { tracker.getProjectedX(0), tracker.getProjectedY(0) },
 			event.getHeadingRadians()
 		);
 		double[] enemyPosFuture = (enemyPosFutureSmart == null) ? ememyPosFutureDumb : enemyPosFutureSmart;
