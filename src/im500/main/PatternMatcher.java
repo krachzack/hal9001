@@ -18,11 +18,12 @@ public class PatternMatcher {
 	/**
 	 * The log is ordered from the youngest to the oldest record
 	 */
-	LinkedList<Record> log = new LinkedList<Record>();
+	static LinkedList<Record> log = new LinkedList<Record>();
 	
 	static final int MATCH_LENGTH = 7;
 	static final double THRESHOLD = 0.01;
 	static final double MATCH_THRESHOLD = 1;
+	static final int MAX_LOG_SIZE = 500;
 
 	public double predictedHeadingDelta;
 	public double predictedVelocity;
@@ -33,7 +34,12 @@ public class PatternMatcher {
 	double enemyX;
 	double enemyY;
 	
-	public PatternMatcher(AdvancedRobot robot) {
+	public PatternMatcher(){
+		System.out.println("Log size: " + log.size());
+	}
+	
+	
+	public void setRobot(AdvancedRobot robot){
 		this.robot = robot;
 	}
 	
@@ -44,6 +50,10 @@ public class PatternMatcher {
 		log.addFirst(new Record(event.getHeadingRadians() - enemyHeading, event.getVelocity()));
 		enemyHeading = event.getHeadingRadians();
 		enemyVelocity = event.getVelocity();
+		
+		if(log.size() > MAX_LOG_SIZE){
+			log.removeLast();
+		}
 		
 		/*
 		double futureHeading = event.getHeadingRadians();
@@ -86,10 +96,17 @@ public class PatternMatcher {
 		List<Record> predictions = getPredictions(inTicks);
 		ePos = Arrays.copyOf(ePos, ePos.length);
 		if(predictions != null){
+			int i = 0;
 			for(Record r : predictions){
 				eHeading += r.getHeadingDelta();
 				ePos[0] += Math.cos(Angle.roboToMath(eHeading))*r.velocity;
 				ePos[1] += Math.sin(Angle.roboToMath(eHeading))*r.velocity;
+				
+				robot.getGraphics().setColor(Color.RED);
+				//float size = (i+1)/(inTicks+1) * 20;
+				float size = (float) Math.pow(0.92,inTicks-i) * 20;
+				robot.getGraphics().drawOval((int)(ePos[0] - size/2.0), (int)(ePos[1] - size/2.0), (int)size, (int)size);
+				i++;
 			}
 			robot.getGraphics().setColor(Color.RED);
 			robot.getGraphics().drawOval((int)ePos[0] - 10, (int)ePos[1] - 10, 20, 20);
@@ -124,8 +141,9 @@ public class PatternMatcher {
 		}
 		
 		//System.out.println(bestMatchDistSum);
-		if(bestMatchDistSum < MATCH_THRESHOLD && bestMatchIndex != -1){
+		if(bestMatchDistSum < MATCH_THRESHOLD && bestMatchIndex != -1 && bestMatchIndex+futureRecords < log.size()){
 			List<Record> predictions = log.subList(bestMatchIndex, bestMatchIndex+futureRecords);
+
 			return predictions;
 		}
 		
