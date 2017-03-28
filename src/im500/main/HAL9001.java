@@ -51,6 +51,21 @@ public class HAL9001 extends AdvancedRobot {
 			new double[] { tracker.getProjectedX(0), tracker.getProjectedY(0) },
 			event.getHeadingRadians()
 		);
+		
+		if(enemyPosFutureSmart != null){
+			double oldTicksUntilHit = ticksUntilHit;
+			
+			ticksUntilHit = Math.sqrt(Math.pow(enemyPosFutureSmart[0]-getX(), 2) + Math.pow(enemyPosFutureSmart[1]-getY(), 2)) / bulletVelocity;
+			
+			System.out.println("prediction error: "+ (ticksUntilHit - oldTicksUntilHit));
+			
+			enemyPosFutureSmart = matcher.getFuturePosition(
+					(int) Math.round(ticksUntilHit),
+					new double[] { tracker.getProjectedX(0), tracker.getProjectedY(0) },
+					event.getHeadingRadians()
+				);
+		}
+		
 		double[] enemyPosFuture = (enemyPosFutureSmart == null) ? ememyPosFutureDumb : enemyPosFutureSmart;
 		
 		Move.aim(this, enemyPosFuture[0], enemyPosFuture[1]);
