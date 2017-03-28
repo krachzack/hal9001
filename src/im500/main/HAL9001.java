@@ -1,6 +1,7 @@
 package im500.main;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 
 import robocode.AdvancedRobot;
 import robocode.HitRobotEvent;
@@ -9,6 +10,7 @@ import robocode.ScannedRobotEvent;
 public class HAL9001 extends AdvancedRobot {
 	private static int CLOSE_QUARTERS_DISTANCE = 65;
 	private Scanner scanner = new Scanner(this);
+	private Tracker tracker = new Tracker(this);
 
 	private void initialize() {
 		setColors(Color.BLACK, Color.RED, Color.YELLOW, Color.PINK, Color.BLACK);
@@ -27,6 +29,7 @@ public class HAL9001 extends AdvancedRobot {
 	
 	@Override
 	public void onScannedRobot(ScannedRobotEvent event) {
+		tracker.onScannedRobot(event);
 		scanner.onScanned(event);
 		
 		setTurnRight(event.getBearing());
@@ -41,6 +44,13 @@ public class HAL9001 extends AdvancedRobot {
 		if (getEnergy() > 5) setFire(firepower);
 		setAhead(event.getDistance() + 5);
 		execute();
+	}
+	
+	@Override
+	public void onPaint(Graphics2D g) {
+		g.setColor(Color.GREEN);
+		g.drawRect((int)getX()-2, (int)getY()-2, 4, 4);
+		g.drawLine((int)getX(), (int)getY(), (int)tracker.getProjectedX(), (int)tracker.getProjectedY());
 	}
 	
 	@Override

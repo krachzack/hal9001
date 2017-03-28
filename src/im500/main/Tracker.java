@@ -1,7 +1,5 @@
 package im500.main;
 
-import javax.rmi.CORBA.Util;
-
 import robocode.AdvancedRobot;
 import robocode.ScannedRobotEvent;
 import robocode.util.Utils;
@@ -20,12 +18,12 @@ public class Tracker {
 	}
 
 	public void onScannedRobot(ScannedRobotEvent e) {
-		enemyAbsoluteAngle = Utils.normalAbsoluteAngle(e.getHeadingRadians() - r.getHeadingRadians());
+		enemyAbsoluteAngle = e.getHeadingRadians();
 		enemyVelocity = e.getVelocity();
 		
 		double selfX = r.getX();
 		double selfY = r.getY();
-		double toEnemyAngle = r.getRadarHeadingRadians();
+		double toEnemyAngle = Angle.roboToMath(Utils.normalAbsoluteAngle(r.getHeadingRadians() + e.getBearingRadians()));
 		double toEnemyDistance = e.getDistance();
 		
 		enemyX = selfX + Math.cos(toEnemyAngle) * toEnemyDistance;
@@ -36,11 +34,12 @@ public class Tracker {
 	
 	public double getProjectedX() {
 		long deltaTurns = r.getTime() - enemyTurn;
-		return enemyX + Math.cos(enemyAbsoluteAngle) * enemyVelocity * deltaTurns;
+		return enemyX + Math.cos(Angle.roboToMath(enemyAbsoluteAngle)) * enemyVelocity * deltaTurns;
 	}
 	
 	public double getProjectedY() {
 		long deltaTurns = r.getTime() - enemyTurn;
-		return enemyY + Math.sin(enemyAbsoluteAngle) * enemyVelocity * deltaTurns;
+		return enemyY + Math.sin(Angle.roboToMath(enemyAbsoluteAngle)) * enemyVelocity * deltaTurns;
 	}
+	
 }
