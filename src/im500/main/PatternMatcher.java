@@ -23,7 +23,7 @@ public class PatternMatcher {
 	static final int MATCH_LENGTH = 7;
 	static final double THRESHOLD = 0.01;
 	static final double MATCH_THRESHOLD = 1;
-	static final int MAX_LOG_SIZE = 500;
+	static final int MAX_LOG_SIZE = 800;
 
 	public double predictedHeadingDelta;
 	public double predictedVelocity;

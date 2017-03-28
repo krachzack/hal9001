@@ -36,15 +36,10 @@ public class HAL9001 extends AdvancedRobot {
 		scanner.onScanned(event);
 		matcher.onScanned(event);
 		
-		Move.towards(this, tracker.getProjectedX(0), tracker.getProjectedY(0));
-	
-		
 		double firepower = 0.1;
 		if (event.getDistance() < CLOSE_QUARTERS_DISTANCE * 4) firepower = 1;
 		if (event.getDistance() < CLOSE_QUARTERS_DISTANCE * 2) firepower = 2;
 		if (event.getDistance() < CLOSE_QUARTERS_DISTANCE) firepower = 3;
-		if (getEnergy() > 5) setFire(firepower);
-		
 		
 		double bulletVelocity = 20 - 3 * firepower;
 		double ticksUntilHit = event.getDistance() / bulletVelocity;
@@ -59,6 +54,10 @@ public class HAL9001 extends AdvancedRobot {
 		double[] enemyPosFuture = (enemyPosFutureSmart == null) ? ememyPosFutureDumb : enemyPosFutureSmart;
 		
 		Move.aim(this, enemyPosFuture[0], enemyPosFuture[1]);
+		do {
+			execute();
+		} while(getGunTurnRemaining() > 1);
+		
 		getGraphics().setColor(Color.GREEN);
 		getGraphics().drawLine((int)getX(), (int)getY(), (int)ememyPosFutureDumb[0], (int)ememyPosFutureDumb[1]);
 		
@@ -78,6 +77,15 @@ public class HAL9001 extends AdvancedRobot {
 		if (event.getDistance() < CLOSE_QUARTERS_DISTANCE) firepower = 3;
 		if (getEnergy() > 5) setFire(firepower);
 		setAhead(event.getDistance() + 5);*/
+		do {
+			execute();
+		} while(getGunTurnRemaining() > 1);
+		
+		
+		if (getEnergy() > 5) setFire(firepower);
+		execute();
+		
+		Move.towards(this, tracker.getProjectedX(0), tracker.getProjectedY(0));
 		execute();
 	}
 	
