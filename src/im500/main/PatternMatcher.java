@@ -3,6 +3,7 @@ package im500.main;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,6 +30,9 @@ public class PatternMatcher {
 	public double enemyHeading = 0;
 	public double enemyVelocity = 0;
 	
+	double enemyX;
+	double enemyY;
+	
 	public PatternMatcher(AdvancedRobot robot) {
 		this.robot = robot;
 	}
@@ -41,6 +45,7 @@ public class PatternMatcher {
 		enemyHeading = event.getHeadingRadians();
 		enemyVelocity = event.getVelocity();
 		
+		/*
 		double futureHeading = event.getHeadingRadians();
 		
 		// calculate position
@@ -48,11 +53,12 @@ public class PatternMatcher {
 		double selfY = robot.getY();
 		double toEnemyAngle = Angle.roboToMath(Utils.normalAbsoluteAngle(robot.getHeadingRadians() + event.getBearingRadians()));
 		double toEnemyDistance = event.getDistance();
-		double enemyX = selfX + Math.cos(toEnemyAngle) * toEnemyDistance;
-		double enemyY = selfY + Math.sin(toEnemyAngle) * toEnemyDistance;
+		enemyX = selfX + Math.cos(toEnemyAngle) * toEnemyDistance;
+		enemyY = selfY + Math.sin(toEnemyAngle) * toEnemyDistance;
 		
 		robot.getGraphics().setColor(Color.RED);
 		robot.getGraphics().drawOval((int)enemyX - 10, (int)enemyY - 10, 20, 20);
+		
 		
 		List<Record> predictions = getPredictions(30);
 		if(predictions != null){
@@ -66,6 +72,31 @@ public class PatternMatcher {
 				System.out.println(enemyX + " " + enemyY);
 			}
 		}
+		*/
+	}
+	
+	/**
+	 * returns future position in x ticks. null if no prediction
+	 * @param inTicks
+	 * @param ePos enemy position
+	 * * @param eHeading enemy heading
+	 * @return
+	 */
+	public double[] getFuturePosition(int inTicks, double[] ePos, double eHeading){
+		List<Record> predictions = getPredictions(inTicks);
+		ePos = Arrays.copyOf(ePos, ePos.length);
+		if(predictions != null){
+			for(Record r : predictions){
+				eHeading += r.getHeadingDelta();
+				ePos[0] += Math.cos(Angle.roboToMath(eHeading))*r.velocity;
+				ePos[1] += Math.sin(Angle.roboToMath(eHeading))*r.velocity;
+			}
+			robot.getGraphics().setColor(Color.RED);
+			robot.getGraphics().drawOval((int)ePos[0] - 10, (int)ePos[1] - 10, 20, 20);
+			
+			return ePos;
+		}
+		return null;
 	}
 	
 	/**
