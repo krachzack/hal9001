@@ -27,6 +27,7 @@ public class HAL9001 extends AdvancedRobot {
 		initialize();
 		while (true) {
 			scanner.scan();
+			execute();
 		}
 	}
 	
@@ -69,9 +70,6 @@ public class HAL9001 extends AdvancedRobot {
 		double[] enemyPosFuture = (enemyPosFutureSmart == null) ? ememyPosFutureDumb : enemyPosFutureSmart;
 		
 		Move.aim(this, enemyPosFuture[0], enemyPosFuture[1]);
-		do {
-			execute();
-		} while(getGunTurnRemaining() > 1);
 		
 		getGraphics().setColor(Color.GREEN);
 		getGraphics().drawLine((int)getX(), (int)getY(), (int)ememyPosFutureDumb[0], (int)ememyPosFutureDumb[1]);
@@ -92,16 +90,10 @@ public class HAL9001 extends AdvancedRobot {
 		if (event.getDistance() < CLOSE_QUARTERS_DISTANCE) firepower = 3;
 		if (getEnergy() > 5) setFire(firepower);
 		setAhead(event.getDistance() + 5);*/
-		do {
-			execute();
-		} while(getGunTurnRemaining() > 1);
-		
-		
 		if (getEnergy() > 5) setFire(firepower);
 		execute();
 		
 		Move.towards(this, tracker.getProjectedX(0), tracker.getProjectedY(0));
-		execute();
 	}
 	
 	@Override
