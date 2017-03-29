@@ -37,9 +37,9 @@ public class HAL9001 extends AdvancedRobot {
 		scanner.onScanned(event);
 		matcher.onScanned(event);
 		
-		double firepower = 0.1;
-		if (event.getDistance() < CLOSE_QUARTERS_DISTANCE * 4) firepower = 1;
-		if (event.getDistance() < CLOSE_QUARTERS_DISTANCE * 2) firepower = 2;
+		double firepower = 0.8;
+		if (event.getDistance() < CLOSE_QUARTERS_DISTANCE * 4) firepower = 1.3;
+		if (event.getDistance() < CLOSE_QUARTERS_DISTANCE * 2) firepower = 2.0;
 		if (event.getDistance() < CLOSE_QUARTERS_DISTANCE) firepower = 3;
 		
 		double bulletVelocity = 20 - 3 * firepower;
@@ -90,10 +90,12 @@ public class HAL9001 extends AdvancedRobot {
 		if (event.getDistance() < CLOSE_QUARTERS_DISTANCE) firepower = 3;
 		if (getEnergy() > 5) setFire(firepower);
 		setAhead(event.getDistance() + 5);*/
+		
 		if (getEnergy() > 5) setFire(firepower);
+		//setFire(3.0);
 		execute();
 		
-		Move.towards(this, tracker.getProjectedX(0), tracker.getProjectedY(0));
+		Move.towards(this, enemyPosFuture[0], enemyPosFuture[1]);
 	}
 	
 	@Override
